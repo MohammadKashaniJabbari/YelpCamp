@@ -24,13 +24,7 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
-app.get('/makecampground', async (req, res) => {
-    const camp = new CampGround({
-        title: 'Gaboor Palace',
-        price: '0',
-        description: 'Cheap Farting Farm',
-        location: 'Philadelphia'
-    });
-    await camp.save();
-    res.send(camp);
+app.get('/campgrounds', async (req, res) => {
+    const campgrounds = await CampGround.find({});
+    res.render('campgrounds/index', { campgrounds });
 });
