@@ -1,24 +1,35 @@
 <% layout('layouts/boilerplate')%>
-    <h1>
-        <%= campground.title %>
-    </h1>
-    <h2>
-        <%= campground.location %>
-    </h2>
-    <h3>
-        $<%= campground.price %>
-    </h3>
-    <img src="<%= campground.image %>" alt="">
-    <p>
-        <%= campground.description %>
-    </p>
-    <footer>
-        <a href="/campgrounds/<%= campground._id %>/edit">Edit CampGround</a>
-        <br>
-        <br>
-        <form action="/campgrounds/<%= campground._id %>?_method=delete" method="post">
-            <button type="submit">Delete CampGround</button>
-        </form>
-        <br>
-        <a href="/campgrounds">Back to CampGrounds</a>
-    </footer>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card mb-3">
+                <img src="<%= campground.image %>" class="card-img-top" alt="">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <%= campground.title %>
+                    </h5>
+                    <p class="card-text">
+                        <%= campground.description %>
+                    </p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item text-secondary">
+                        <%= campground.location %>
+                    </li>
+                    <li class="list-group-item text-secondary">
+                        $<%= campground.price %> per night
+                    </li>
+                </ul>
+                <div class="card-body">
+                    <a class="card-link btn btn-info" href="/campgrounds/<%= campground._id %>/edit">Edit</a>
+                    <form class="d-inline card-link" action="/campgrounds/<%= campground._id %>?_method=delete"
+                        method="post">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                    <a class="card-link btn btn-dark" href="/campgrounds">Back to List</a>
+                </div>
+                <div class="card-footer text-secondary">
+                    2 days ago
+                </div>
+            </div>
+        </div>
+    </div>
