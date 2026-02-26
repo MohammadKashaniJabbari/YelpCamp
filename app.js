@@ -5,6 +5,7 @@ const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
 const CampGround = require('./models/campground');
 const ExpressError = require('./utils/ExpressError');
+const { campGroundSchema } = require('./schemas');
 
 const app = express();
 app.engine('ejs', ejsMate);
@@ -21,6 +22,16 @@ mongoose.connect('mongodb://localhost:27017/yelp-camp')
         console.log('Connection Error');
         console.log(err);
     });
+
+const validateCampGround = (req, res, next) => {
+    const { error } = campGroundSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',');
+        next(new ExpressError(msg, 400));
+    } else {
+        next();
+    }
+};
 
 app.listen(3000, () => {
     console.log('Serving on Port 3000');
@@ -39,8 +50,7 @@ app.get('/campgrounds/new', (req, res) => {
     res.render('campgrounds/new');
 });
 
-app.post('/campgrounds', async (req, res) => {
-    if (!req.body.campground) throw new ExpressError('Invalid CampGround Data!', 400);
+app.post('/campgrounds', validateCampGround, async (req, res) => {
     const campground = new CampGround(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
@@ -58,7 +68,7 @@ app.get('/campgrounds/:id/edit', async (req, res) => {
     res.render('campgrounds/edit', { campground });
 });
 
-app.put('/campgrounds/:id', async (req, res) => {
+app.put('/campgrounds/:id', validateCampGround, async (req, res) => {
     const { id } = req.params;
     const campground = await CampGround.findByIdAndUpdate(id, req.body.campground, { new: true, runValidators: true });
     res.redirect(`/campgrounds/${campground._id}`);
