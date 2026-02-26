@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
 const CampGround = require('./models/campground');
+const ExpressError = require('./utils/ExpressError');
 
 const app = express();
 app.engine('ejs', ejsMate);
@@ -22,7 +23,7 @@ mongoose.connect('mongodb://localhost:27017/yelp-camp')
     });
 
 app.listen(3000, () => {
-    console.log('Serving on port 3000');
+    console.log('Serving on Port 3000');
 });
 
 app.get('/', (req, res) => {
@@ -39,6 +40,7 @@ app.get('/campgrounds/new', (req, res) => {
 });
 
 app.post('/campgrounds', async (req, res) => {
+    if (!req.body.campground) throw new ExpressError('Invalid CampGround Data!', 400);
     const campground = new CampGround(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
@@ -66,4 +68,13 @@ app.delete('/campgrounds/:id', async (req, res) => {
     const { id } = req.params;
     await CampGround.findByIdAndDelete(id);
     res.redirect('/campgrounds');
+});
+
+app.all('/{*splat}', (req, res, next) => {
+    next(new ExpressError('Page Not Found!', 404));
+});
+
+app.use((err, req, res, next) => {
+    const { statusCode = 500, message = 'Something Went Wrong!' } = err;
+    res.status(statusCode).render('error', { err });
 });
