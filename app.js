@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
 const CampGround = require('./models/campground');
+const Review = require('./models/review');
 const ExpressError = require('./utils/ExpressError');
 const { campGroundSchema } = require('./schemas');
 
@@ -79,6 +80,15 @@ app.delete('/campgrounds/:id', async (req, res) => {
     await CampGround.findByIdAndDelete(id);
     res.redirect('/campgrounds');
 });
+
+app.post('/campgrounds/:id/reviews', async (req, res) => {
+    const campGround = await CampGround.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campGround.reviews.push(review);
+    await review.save();
+    await campGround.save();
+    res.redirect(`/campgrounds/${campGround._id}`);
+})
 
 app.all('/{*splat}', (req, res, next) => {
     next(new ExpressError('Page Not Found!', 404));
