@@ -16,9 +16,9 @@ const campGroundSchema = new Schema({
     ]
 });
 
-campGroundSchema.post('findOneAndDelete', async function (campground) {
-    if (campground?.reviews.length > 0) {
-        await Review.deleteMany({ _id: { $in: campground.reviews } });
+campGroundSchema.post('findOneAndDelete', async function (campGround) {
+    if (campGround?.reviews.length > 0) {
+        await Review.deleteMany({ _id: { $in: campGround.reviews } });
     }
 });
 
