@@ -3,6 +3,7 @@ const session = require('express-session');
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
+const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const ExpressError = require('./utils/ExpressError');
 
@@ -25,8 +26,16 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session(sessionConfig));
+app.use(flash());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+});
+
 app.use('/campgrounds', campGrounds);
 app.use('/campgrounds/:id/reviews', reviews);
 
