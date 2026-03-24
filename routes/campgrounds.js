@@ -33,24 +33,34 @@ router.post('/', validateCampGround, async (req, res) => {
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     const campground = await CampGround.findById(id).populate('reviews');
+    if (!campground) {
+        req.flash('error', 'Cannot find that campground!');
+        return res.redirect('/campgrounds');
+    }
     res.render('campgrounds/show', { campground });
 });
 
 router.get('/:id/edit', async (req, res) => {
     const { id } = req.params;
     const campground = await CampGround.findById(id);
+    if (!campground) {
+        req.flash('error', 'Cannot find that campground!');
+        return res.redirect('/campgrounds');
+    }
     res.render('campgrounds/edit', { campground });
 });
 
 router.put('/:id', validateCampGround, async (req, res) => {
     const { id } = req.params;
     const campground = await CampGround.findByIdAndUpdate(id, req.body.campground, { returnDocument: 'after', runValidators: true });
+    req.flash('success', 'Successfully edited a camp ground!');
     res.redirect(`/campgrounds/${campground._id}`);
 });
 
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     await CampGround.findByIdAndDelete(id);
+    req.flash('success', 'Successfully deleted a camp ground!');
     res.redirect('/campgrounds');
 });
 
