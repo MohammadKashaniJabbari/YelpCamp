@@ -20,8 +20,9 @@ const sessionConfig = {
         httpOnly: true
     }
 };
-const campGrounds = require('./routes/campgrounds');
-const reviews = require('./routes/reviews');
+const campGroundRoutes = require('./routes/campgrounds');
+const reviewRoutes = require('./routes/reviews');
+const userRoutes = require('./routes/users');
 const cookie = require('express-session/session/cookie');
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
@@ -45,8 +46,9 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/campgrounds', campGrounds);
-app.use('/campgrounds/:id/reviews', reviews);
+app.use('/', userRoutes);
+app.use('/campgrounds', campGroundRoutes);
+app.use('/campgrounds/:id/reviews', reviewRoutes);
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp')
     .then(() => {
