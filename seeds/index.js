@@ -18,6 +18,7 @@ const seedDB = async () => {
     await CampGround.deleteMany({});
     for (let i = 0; i < 50; i++) {
         const camp = new CampGround({
+            author: '69c58c518a7b981efde12b8c',
             title: `${sample(descriptors)} ${sample(places)}`,
             location: `${sample(cities).city}, ${sample(cities).state}`,
             image: `https://picsum.photos/400?random=${Math.random()}`,
