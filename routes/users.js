@@ -25,6 +25,10 @@ router.post('/register', async (req, res, next) => {
 });
 
 router.get('/login', (req, res) => {
+    const url = req.get('Referer');
+    if (!req.session.returnTo && url && !url.includes('/login') && !url.includes('/register')) {
+        req.session.returnTo = url;
+    }
     res.render('users/login');
 });
 
